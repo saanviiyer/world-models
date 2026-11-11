@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Models | Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root {
+  --bg: #ffffff; --fg: #1d1b1a; --muted: #737373; --soft: #8c8c8c; --line: #e5e5e5; --hover: #f5f5f5;
+  --brand: #9a2036; --brand-tint: #f3dedc; --brand-wash: #faf0ef;
+  --font: "Golos Text", "Noto Sans", Helvetica, Arial, Verdana, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #1d1b1a; --fg: #ededed; --muted: #a3a3a3; --soft: #8c8c8c; --line: #333130; --hover: #2a2827;
+  --brand: #e2899a; --brand-tint: #3d2229; --brand-wash: #2c2023; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #1d1b1a; --fg: #ededed; --muted: #a3a3a3; --soft: #8c8c8c; --line: #333130; --hover: #2a2827;
+  --brand: #e2899a; --brand-tint: #3d2229; --brand-wash: #2c2023; color-scheme: dark; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 18px; line-height: 1.75; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 4px; }
+
+.app { display: grid; grid-template-columns: 176px minmax(0, 1fr) 236px; min-height: 100vh; }
+.app > div { min-width: 0; }
+.side { position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--line); padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.brand { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 17px; color: var(--brand); padding: 4px 10px 18px; text-decoration: none; }
+.brand-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--brand); }
+.nav { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 8px; text-decoration: none; color: var(--fg); }
+.nav:hover { background: var(--hover); }
+.nav.on { background: var(--hover); font-weight: 500; }
+.side .spacer { flex: 1; }
+.theme { all: unset; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.theme:hover { background: var(--hover); }
+
+.center { display: grid; grid-template-columns: minmax(0, 680px) 44px; justify-content: center; gap: 24px; padding: 28px 32px 96px; border-right: 1px solid var(--line); }
+article { min-width: 0; }
+.crumb { font-size: 13px; color: var(--muted); margin: 0 0 6px; }
+h1 { font-size: 34px; line-height: 1.18; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 14px; text-wrap: balance; }
+.deck { font-size: 19px; line-height: 1.6; color: var(--muted); margin: 0 0 20px; }
+.actions { display: flex; gap: 8px; align-items: center; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.follow { display: inline-flex; align-items: center; gap: 6px; background: var(--brand-tint); color: var(--brand); border: 0; border-radius: 999px; padding: 6px 16px; font-size: 14px; font-weight: 500; cursor: pointer; }
+.pill { display: inline-flex; align-items: center; gap: 6px; background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 14px; cursor: pointer; }
+.round { display: inline-grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; background: none; cursor: pointer; }
+.pill:hover, .round:hover { background: var(--hover); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 14px; color: var(--muted); margin: 18px 0 6px; }
+.meta .kind { color: var(--brand); font-weight: 600; }
+.by { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); margin: 0 0 6px; }
+.by .avatar { width: 22px; height: 22px; border-radius: 50%; background: var(--brand-tint); color: var(--brand); display: grid; place-items: center; font-size: 11px; font-weight: 600; }
+.by b { color: var(--fg); font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 36px; }
+.chip { font-size: 12.5px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
+
+article h2 { font-size: 25px; line-height: 1.3; font-weight: 600; letter-spacing: -0.01em; margin: 56px 0 14px; scroll-margin-top: 24px; text-wrap: balance; }
+article h3 { font-size: 20px; line-height: 1.35; font-weight: 600; margin: 36px 0 10px; scroll-margin-top: 24px; }
+article p { margin: 0 0 20px; }
+article p.lead { font-size: 21px; line-height: 1.5; font-weight: 500; margin: 8px 0 22px; }
+article ol, article ul { margin: 0 0 22px; padding-left: 26px; display: grid; gap: 12px; }
+article li::marker { color: var(--muted); }
+article strong { font-weight: 600; }
+.eq { overflow-x: auto; margin: 4px 0 22px; padding: 6px 0; text-align: center; }
+figure { margin: 30px 0 34px; }
+figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+figcaption { font-size: 14px; line-height: 1.55; color: var(--muted); margin-top: 10px; }
+figcaption b { color: var(--fg); font-weight: 600; }
+
+.toc { position: sticky; top: 120px; align-self: start; }
+.ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ticks a { display: block; height: 2px; width: 20px; background: var(--line); }
+.ticks li.sub a { width: 12px; margin-left: 8px; }
+.ticks a.on { background: var(--fg); }
+.ticks a span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.toc:hover .ticks, .toc:focus-within .ticks { position: absolute; right: 0; top: -12px; width: 300px; gap: 2px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,.12); z-index: 5; }
+.toc:hover .ticks a, .toc:focus-within .ticks a { height: auto; width: auto; margin: 0; background: none; text-decoration: none; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+.toc:hover .ticks li.sub a, .toc:focus-within .ticks li.sub a { padding-left: 12px; }
+.toc:hover .ticks a span, .toc:focus-within .ticks a span { position: static; width: auto; height: auto; clip-path: none; overflow: visible; }
+.toc:hover .ticks a.on, .toc:focus-within .ticks a.on { color: var(--brand); }
+
+.rail { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 28px 16px; font-size: 14px; }
+.rail h2 { font-size: 15px; font-weight: 600; margin: 0 0 12px; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--hover); border-radius: 999px; padding: 3px; margin-bottom: 18px; }
+.seg button { all: unset; text-align: center; padding: 4px 0; border-radius: 999px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--bg); color: var(--fg); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.tl { list-style: none; margin: 0 0 0 6px; padding: 0 0 0 14px; border-left: 1px solid var(--line); }
+.tl .yr { font-size: 12px; color: var(--muted); margin: 14px 0 8px -14px; padding-left: 14px; }
+.tl .yr:first-child { margin-top: 0; }
+.tl li.it { position: relative; margin-bottom: 14px; }
+.tl li.it::before { content: ""; position: absolute; left: -19px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--bg); border: 1.5px solid var(--soft); }
+.tl li.it.issue::before { border-color: var(--brand); }
+.tl a { display: block; text-decoration: none; padding: 2px 6px; margin-left: -6px; border-radius: 6px; }
+.tl a:hover { background: var(--hover); }
+.tl .d { font-size: 12px; color: var(--muted); }
+.tl .t { display: block; font-size: 13.5px; line-height: 1.35; font-weight: 500; }
+.tl .w { display: block; font-size: 12.5px; color: var(--muted); }
+.tl li.cur::before { background: var(--brand); border-color: var(--brand); top: 12px; }
+.tl li.cur a { background: var(--brand-tint); padding: 8px 10px; }
+.tl li.cur .d, .tl li.cur .t { color: var(--brand); }
+
+.tabs { display: none; }
+@media (max-width: 1180px) { .app { grid-template-columns: 64px minmax(0, 1fr) 236px; } .side .lbl, .brand span { display: none; } .center { grid-template-columns: minmax(0, 680px); } .toc { display: none; } }
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr); } .side { display: none; }
+  .center { padding: 16px max(16px, env(safe-area-inset-left, 0px)) 72px; border-right: 0; }
+  .rail { position: static; height: auto; padding: 16px; }
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--hover); border-radius: 999px; padding: 3px; margin: 12px 16px 0; }
+  .tabs button { all: unset; text-align: center; padding: 6px 0; border-radius: 999px; font-size: 14px; color: var(--muted); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--bg); color: var(--fg); }
+  body.show-tl .center { display: none; } body:not(.show-tl) .rail { display: none; }
+  h1 { font-size: 28px; } body { font-size: 17px; }
+}
+
+.fig-frame { position: relative; border: 1px solid var(--line); border-radius: 8px; background: #fff; overflow: hidden; }
+.fig-frame svg { display: block; width: 100%; height: auto; }
+.replay { position: absolute; top: 8px; right: 8px; font: 500 12px/1 inherit; font-family: inherit; color: #5c5856; background: #fff;
+  border: 1px solid #d9d4d1; border-radius: 6px; padding: 6px 9px; cursor: pointer; opacity: 0; transition: opacity .2s; }
+figure:hover .replay, .replay:focus-visible { opacity: 1; }
+@media (hover: none) { .replay { opacity: 1; } }
+.replay:hover { color: #9a2036; border-color: #c98a93; }
+figure.anim [data-s], figure.anim .val { opacity: 0; transform: translateY(6px);
+  transition: opacity .5s ease, transform .5s ease; transition-delay: calc(var(--s, 0) * 130ms); }
+figure.anim.play [data-s], figure.anim.play .val { opacity: 1; transform: none; }
+figure.anim .bar { transform-box: fill-box; transform-origin: 50% 100%; transform: scaleY(0);
+  transition: transform .9s cubic-bezier(.2,.8,.2,1); transition-delay: calc(var(--s) * 90ms); }
+figure.anim.play .bar { transform: scaleY(1); }
+figure.anim .val { transition-delay: calc(var(--s) * 90ms + 700ms); }
+figure.anim.reset *, figure.anim.reset { transition: none !important; animation: none !important; }
+figure.anim.play .p-ball { animation: wm-perm 3.4s ease-in-out .3s both; }
+figure.anim.play .g-block { transform-box: fill-box; transform-origin: 0% 100%; animation: wm-fall 3s ease-in .3s both; }
+figure.anim.play .c-ball { animation: wm-hit 2.6s .3s both; }
+figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3s both; }
+@keyframes wm-perm { 0% { transform: translateX(0); } 70% { transform: translateX(208px); opacity: 1; }
+  82% { transform: translateX(208px); opacity: 0; } 83% { transform: translateX(0); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes wm-fall { 0%, 30% { transform: none; opacity: 1; } 62% { transform: translate(10px, 24px) rotate(16deg); opacity: 0; }
+  63% { transform: none; opacity: 0; } 100% { transform: none; opacity: 1; } }
+@keyframes wm-hit { 0% { transform: translateX(-110px); animation-timing-function: ease-in; }
+  40% { transform: translateX(0); animation-timing-function: ease-out; } 78% { transform: translateX(-80px); opacity: 1; }
+  86% { transform: translateX(-80px); opacity: 0; } 87% { transform: translateX(0); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes wm-roll { from { transform: translateX(-208px); } to { transform: translateX(0); } }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="side" aria-label="Site">
+    <a class="brand" href="#introduction"><span>World Models</span></a>
+    <a class="nav on" href="#introduction"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h6a2 2 0 012 2v13a2 2 0 00-2-2H4z"/><path d="M20 5h-6a2 2 0 00-2 2v13a2 2 0 012-2h6z"/></svg><span class="lbl">Guide</span></a>
+    <div class="spacer"></div>
+    <button class="theme" id="theme" type="button"><svg class="ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="lbl">Dark theme</span></button>
+  </nav>
+
+  <div>
+    <div class="tabs" role="tablist"><button role="tab" id="tab-g" aria-selected="true">Guide</button><button role="tab" id="tab-t" aria-selected="false">Timeline</button></div>
+    <main class="center">
+      <article>
+        <p class="crumb">Guides</p>
+        <h1>The Full Guide to World Models: From Video Perception to Physical Simulation</h1>
+        <p class="deck">World models predict how the world changes when an agent acts. This guide covers the video encoders that perceive the world, the physical primitives a model must respect, energy-based planning, where world models already work in robotics, driving, games and science, and how to interpret the models that interpret the world.</p>
+
+        <div class="meta"><span class="kind">Guide</span><span>Updated Nov 9, 2026</span><span>14 min read</span></div>
+
+        <div class="chips"><span class="chip">Computer Vision</span><span class="chip">Robotics</span><span class="chip">World Models</span><span class="chip">Self-Supervised Learning</span></div>
+<h2 id="introduction">1. Introduction</h2>
+<p>In the pursuit of artificial general intelligence and autonomous physical agents, a world model serves as an internal simulator of the environment. To do this, an agent must internalize an operational model of environmental physics, spatial structure, and object interaction. By predicting how the state of the world evolves over time in response to external changes or hypothetical actions, world models provide the necessary scaffold for continuous control, efficient spatial navigation, long-horizon trajectory forecasting, and counterfactual policy planning.</p>
+<p class="lead">The world is not built on language.</p>
+<p>Although text can represent worlds (like the words in a storybook), humans do not need trillions of words of text input in their learning (contrast that with immersive reality). Rather, through interacting with the world with multiple senses (modalities), we build our own internal world model.</p>
+<p>This kind of multimodal, physics-based reasoning holds great potential in robotics and biochemistry, and in the future of immersive learning to more accurately represent world mechanics. Biological vision relies on internal physics models to perform mental simulations, anticipating trajectories, inferring occluded object dynamics, and pre-computing motor responses milliseconds before sensory confirmation occurs. World models are designed from principles of our brain, as human perception operates as an active predictive processing engine.</p>
+<figure id="figure-1" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="A language-only model maps text tokens to a next-token prediction. An embodied world model encodes video into a compact latent state and simulates candidate actions before it acts." xmlns="http://www.w3.org/2000/svg" width="720" height="364" viewBox="0 0 720 364">
+<title>Language-only prediction and an active world model</title>
+<desc>Left, a language-only model maps text tokens to a next-token prediction. Right, an embodied world model encodes video observations into a compact latent state, simulates candidate actions with a predictor, and sends the best action to the robot.</desc>
+<defs><marker id="f1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f1-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<rect width="720" height="364" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
+<rect x="24" y="20" width="240" height="324" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="144" y="52" font-size="18" text-anchor="middle" font-weight="bold">Language-only model</text>
+<g data-s="" style="--s:1">
+<rect x="48" y="96" width="192" height="48" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="144" y="125" text-anchor="middle">Text tokens</text>
+</g>
+<g data-s="" style="--s:2">
+<path d="M144 148V172" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f1-arrow)"/>
+</g>
+<g data-s="" style="--s:3">
+<rect x="48" y="176" width="192" height="48" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="144" y="205" text-anchor="middle">Language model</text>
+</g>
+<g data-s="" style="--s:4">
+<path d="M144 228V252" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f1-arrow)"/>
+</g>
+<g data-s="" style="--s:5">
+<rect x="48" y="256" width="192" height="48" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="144" y="285" text-anchor="middle">Next token</text>
+</g>
+<rect x="288" y="20" width="408" height="324" rx="8" fill="#faf0ef" stroke="#9a2036" stroke-width="1.25"/>
+<text x="492" y="52" font-size="18" fill="#9a2036" text-anchor="middle" font-weight="bold">Embodied world model</text>
+<g data-s="" style="--s:1">
+<rect x="312" y="76" width="168" height="48" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="396" y="105" text-anchor="middle">Video observations</text>
+</g>
+<g data-s="" style="--s:2">
+<path d="M484 100H504" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f1-arrow)"/>
+</g>
+<g data-s="" style="--s:3">
+<rect x="508" y="76" width="164" height="48" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="590" y="105" text-anchor="middle">Encoder</text>
+</g>
+<g data-s="" style="--s:4">
+<path d="M590 128V152" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f1-arrow)"/>
+</g>
+<g data-s="" style="--s:4">
+<rect x="312" y="156" width="168" height="48" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="396" y="185" text-anchor="middle">Candidate actions</text>
+</g>
+<g data-s="" style="--s:5">
+<rect x="508" y="156" width="164" height="48" rx="4" fill="#f3dedc" stroke="#9a2036" stroke-width="1.25"/>
+<text x="590" y="185" text-anchor="middle">Latent state</text>
+</g>
+<g data-s="" style="--s:6">
+<path d="M396 208V228" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f1-arrow)"/>
+<path d="M590 208V228" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f1-arrow-red)"/>
+</g>
+<g data-s="" style="--s:7">
+<rect x="312" y="232" width="360" height="40" rx="4" fill="#9a2036"/>
+<text x="492" y="257" text-anchor="middle" fill="#ffffff">Predictor simulates each action</text>
+</g>
+<g data-s="" style="--s:8">
+<path d="M492 276V296" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f1-arrow-red)"/>
+</g>
+<g data-s="" style="--s:9">
+<rect x="312" y="300" width="360" height="32" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="492" y="321" text-anchor="middle" font-size="14">Best action goes to the robot</text>
+</g>
+</g>
+</svg>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 1.</b> Predictive processing and the tripartite world model architecture. A language-only model maps text tokens to a next-token prediction. An embodied world model encodes video into a compact latent state and simulates candidate actions before it acts.</figcaption></figure>
+<p>Formally, given an observation sequence and prospective actions, a world model predicts the future states of the world to enable reasoning and predictive planning without dangerous, expensive, or tedious real-world trial and error.</p>
+<p>Historically, generative video modeling has been the default foundation of world models through autoregressive pixel prediction or video diffusion models. However, as Yann LeCun and the Joint Embedding Predictive Architecture (JEPA) lineage emphasize, pixel-level modeling faces a catastrophic information-theoretic bottleneck. Natural video is overwhelmed by high-entropy, task-irrelevant stochastic noise, such as sensor grain, subtle lighting flickers, leaves rustling in the wind, and microscopic carpet textures. Forcing a neural network to reconstruct every single pixel allocates the vast majority of its capacity to predicting unpredictable noise, while neglecting macro-scale physical invariants such as object permanence, friction, structural collisions, and trajectory kinematics.</p>
+<p>World models have emerged as the most promising approach for artificial intelligence to model reality. With applications ranging from physical reasoning to biochemistry, interpreting the dynamic world is essential to building reliable simulations. These models are still in their nascent stages, marked by exciting research in video interpretation and non-generative representation learning following Yann LeCun’s coining of the field.</p>
+<p>Let’s dig in!</p>
+<h2 id="video-encoders">2. Video Encoders as the Perceptual Foundation of World Models</h2>
+<p>A large part of how humans learn to perceive the world is through sight. Building off traditional computer vision with image encoders, adding the spatiotemporal dimension through video input is critical for building dynamic simulations that faithfully capture the real world.</p>
+<p class="lead">A world model is only as good as its visual perceptual tokenizer.</p>
+<p>If the encoder mapping raw video into latent vectors discards sub-second velocities, aggregates temporal signals into static scene summaries, or suffers from severe text-induced appearance bias, the downstream transition predictor (or policy) is blind to physical mechanics. Building a video encoder is the primary step of a world model architecture. The video encoder establishes the fundamental observation space for all downstream world modeling. The backbone must preserve spatiotemporal dynamic information, and the choice of video encoder directly determines downstream state representation and predictive quality.</p>
+<h3 id="appearance-vs-motion">The Appearance vs. Motion Dichotomy</h3>
+<p>In video representation learning, a widespread failure mode arises from evaluating models on appearance-dominated benchmarks such as Kinetics-400 (K400). On Kinetics-400, models frequently achieve state-of-the-art action classification scores by identifying static contextual cues alone; recognizing a tennis court, a swimming pool, or a kitchen counter enables a network to guess the action label from a single frozen frame without computing any temporal velocity.</p>
+<p>The true diagnostic test of an encoder's physical understanding lies in motion-sensitive, temporally asymmetric benchmarks such as Something-Something v2 (SSv2) and Diving-48. On Something-Something v2, reversing the temporal sequence of frames fundamentally alters the semantic label, so "pushing an object from left to right" becomes "pushing an object from right to left," and "dropping a ball into a cup" becomes "retrieving a ball from a cup."</p>
+<p>Frame-by-frame 2D vision models (including contrastive models like SigLIP 2 and self-supervised architectures like DINOv2) achieve high accuracy on Kinetics-400 (83% to 87%) yet experience catastrophic collapse on Something-Something v2, falling to approximately 50%. Because these models encode frames independently and aggregate features post-hoc via temporal pooling or shallow heads, their internal latent representations remain blind to acceleration, directionality, and momentum.</p>
+<figure id="figure-2" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Frozen-backbone accuracy with an attentive probe, as reported in the V-JEPA 2 paper. Image encoders score well on Kinetics-400 and near 50% on Something-Something v2." xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360">
+<title>Appearance and motion accuracy by model family</title>
+<desc>Frozen-backbone accuracy from the V-JEPA 2 paper. Image encoders DINOv2 and SigLIP 2 score 83.6 and 87.3 percent on Kinetics-400 but about 50 percent on Something-Something v2. InternVideo2 scores 69.7 and V-JEPA 2 scores 77.3 percent on Something-Something v2.</desc>
+<defs><marker id="f2-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f2-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<rect width="720" height="360" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
+<rect x="80" y="20" width="14" height="14" fill="#8a8481"/>
+<text x="102" y="32" font-size="14">Kinetics-400 (appearance)</text>
+<rect x="324" y="20" width="14" height="14" fill="#9a2036"/>
+<text x="346" y="32" font-size="14">Something-Something v2 (motion)</text>
+<path d="M80 296H696" fill="none" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="72" y="301.0" font-size="14" fill="#5c5856" text-anchor="end">0%</text>
+<path d="M80 240H696" fill="none" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="72" y="245.0" font-size="14" fill="#5c5856" text-anchor="end">25%</text>
+<path d="M80 184H696" fill="none" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="72" y="189.0" font-size="14" fill="#5c5856" text-anchor="end">50%</text>
+<path d="M80 128H696" fill="none" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="72" y="132.99999999999997" font-size="14" fill="#5c5856" text-anchor="end">75%</text>
+<path d="M80 72H696" fill="none" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="72" y="76.99999999999997" font-size="14" fill="#5c5856" text-anchor="end">100%</text>
+<rect class="bar" style="--s:0" x="109" y="108.736" width="44" height="187.264" fill="#8a8481"/>
+<text class="val" style="--s:0" x="131" y="102.736" font-size="14" text-anchor="middle">83.6</text>
+<rect class="bar" style="--s:1" x="161" y="182.432" width="44" height="113.568" fill="#9a2036"/>
+<text class="val" style="--s:1" x="183" y="176.432" font-size="14" text-anchor="middle">50.7</text>
+<text x="157" y="320" font-size="16" text-anchor="middle">DINOv2</text>
+<text x="157" y="340" font-size="14" fill="#5c5856" text-anchor="middle">1.1B image</text>
+<rect class="bar" style="--s:2" x="263" y="100.448" width="44" height="195.552" fill="#8a8481"/>
+<text class="val" style="--s:2" x="285" y="94.448" font-size="14" text-anchor="middle">87.3</text>
+<rect class="bar" style="--s:3" x="315" y="184.224" width="44" height="111.776" fill="#9a2036"/>
+<text class="val" style="--s:3" x="337" y="178.224" font-size="14" text-anchor="middle">49.9</text>
+<text x="311" y="320" font-size="16" text-anchor="middle">SigLIP 2</text>
+<text x="311" y="340" font-size="14" fill="#5c5856" text-anchor="middle">1.2B image</text>
+<rect class="bar" style="--s:4" x="417" y="95.744" width="44" height="200.256" fill="#8a8481"/>
+<text class="val" style="--s:4" x="439" y="89.744" font-size="14" text-anchor="middle">89.4</text>
+<rect class="bar" style="--s:5" x="469" y="139.872" width="44" height="156.128" fill="#9a2036"/>
+<text class="val" style="--s:5" x="491" y="133.872" font-size="14" text-anchor="middle">69.7</text>
+<text x="465" y="320" font-size="16" text-anchor="middle">InternVideo2</text>
+<text x="465" y="340" font-size="14" fill="#5c5856" text-anchor="middle">1B video</text>
+<rect class="bar" style="--s:6" x="571" y="100.448" width="44" height="195.552" fill="#8a8481"/>
+<text class="val" style="--s:6" x="593" y="94.448" font-size="14" text-anchor="middle">87.3</text>
+<rect class="bar" style="--s:7" x="623" y="122.848" width="44" height="173.152" fill="#9a2036"/>
+<text class="val" style="--s:7" x="645" y="116.848" font-size="14" text-anchor="middle">77.3</text>
+<text x="619" y="320" font-size="16" text-anchor="middle">V-JEPA 2</text>
+<text x="619" y="340" font-size="14" fill="#5c5856" text-anchor="middle">1B video</text>
+</g>
+</svg>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 2.</b> The appearance and motion performance gap across model families. Frozen-backbone accuracy with an attentive probe, as reported in the V-JEPA 2 paper. Image encoders score well on Kinetics-400 and near 50% on Something-Something v2.</figcaption></figure>
+<h3 id="four-paradigms">The Four Architectural Paradigms of Visual Representation</h3>
+<p>To overcome this perceptual failure, modern spatiotemporal encoder architectures fall into four primary learning paradigms.</p>
+<ol><li><strong>Pixel-Level Masked Video Modeling (VideoMAE, VideoMAE V2).</strong> VideoMAE rebuilds hidden space-time cubes of pixels with an asymmetric encoder and decoder. Video makes masked autoencoding easy to cheat because a hidden patch often appears in a neighboring frame, allowing the model to simply copy unmasked content across time. Tube masking blocks that shortcut by hiding the exact same spatial position across every frame in the clip. VideoMAE V2 scales this to one billion parameters using dual masking (masking both encoder and decoder) to make billion-parameter pixel pretraining computationally feasible on GPUs. The limitation is that reconstructing normalized raw pixels forces the network to spend parameter capacity on high-frequency visual noise, resulting in brittle frozen linear features (only 38.9% on frozen SSv2 linear evaluation).</li><li><strong>Non-Generative Latent Feature Prediction (V-JEPA, V-JEPA 2, V-JEPA 2.1).</strong> Discarding generative pixel decoders entirely, V-JEPA feeds visible video tubelets into a context encoder, while a narrow transformer predictor forecasts the latent representations of masked spatiotemporal blocks. The target representations are produced by an Exponential Moving Average (EMA) teacher network using an L1 loss in continuous latent space. The advantage is that by predicting in representation space, the encoder ignores unpredictable high-frequency pixel noise (ripples on water, trembling leaves) and focuses strictly on predictable structural and physical dynamics, scoring 77.3% on frozen Something-Something v2 probes with a 1B-parameter backbone.</li><li><strong>Explicit Kinematic Trajectory Supervision (TrackMAE).</strong> Rather than treating motion as an implicit side-effect of pixel synthesis, TrackMAE treats motion as a first-class mathematical objective. It extracts continuous 2D point trajectories across video sequences using point trackers (such as CoTracker3) on a spatial grid. The visual transformer operates under motion-guided tube masking, utilizing a dedicated trajectory decoder that explicitly predicts normalized displacement vectors <span class="m">(x,y)</span> over time, directly grounding metric velocities into the transformer tokens.</li><li><strong>Codec-Guided Predictive Compression (OneVision-Encoder).</strong> Framing visual understanding as an information-theoretic compression problem, OneVision-Encoder departs from uniform frame processing by directly reading native motion vectors and prediction residuals from compressed H.265/HEVC video streams. It retains complete spatial context on I-frames while extracting only the top 3.1% to 25% most dynamic patches from P-frames. Coupled with 3D-RoPE, it processes dense 64-frame video clips without token explosion, maintaining fine-grained temporal tracking at a fraction of the compute cost of uniform frame sampling.</li></ol>
+<h3 id="where-to-add-time">Where Should a Vision-Language Model Add Time?</h3>
+<p>A vision-language model (VLM) sends video through a vision tower and an aligner into an LLM. Each of those stages can handle motion. Modern architectures introduce the temporal dimension at four distinct topological insertion points.</p>
+<figure id="figure-3" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Time can enter before tokenization, inside the vision tower, in the aligner, or in the context of the downstream language model." xmlns="http://www.w3.org/2000/svg" width="720" height="196" viewBox="0 0 720 196">
+<title>Where motion enters a vision pipeline</title>
+<desc>A video model pipeline runs from codec signals to the vision tower, the aligner and a downstream language model. Time can enter at each of these four points. Example models are listed under each stage.</desc>
+<defs><marker id="f3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f3-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<rect width="720" height="196" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
+<text x="106" y="40" font-size="14" fill="#9a2036" text-anchor="middle">1 Before tokens</text>
+<g data-s="" style="--s:0">
+<rect x="36" y="56" width="140" height="52" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="106" y="87" text-anchor="middle">Codec signals</text>
+</g>
+<g data-s="" style="--s:0">
+<text x="106" y="136" font-size="14" fill="#5c5856" text-anchor="middle">OneVision, EMA,</text>
+<text x="106" y="156" font-size="14" fill="#5c5856" text-anchor="middle">CoPE-VideoLM</text>
+</g>
+<g data-s="" style="--s:1">
+<path d="M180 82H200" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f3-arrow)"/>
+</g>
+<text x="274" y="40" font-size="14" fill="#9a2036" text-anchor="middle">2 Inside the tower</text>
+<g data-s="" style="--s:2">
+<rect x="204" y="56" width="140" height="52" rx="4" fill="#f3dedc" stroke="#9a2036" stroke-width="1.25"/>
+<text x="274" y="87" text-anchor="middle">Vision tower</text>
+</g>
+<g data-s="" style="--s:2">
+<text x="274" y="136" font-size="14" fill="#5c5856" text-anchor="middle">Qwen3-VL, TE Fusion,</text>
+<text x="274" y="156" font-size="14" fill="#5c5856" text-anchor="middle">VideoChat3, MoonViT-3D</text>
+</g>
+<g data-s="" style="--s:3">
+<path d="M348 82H368" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f3-arrow)"/>
+</g>
+<text x="442" y="40" font-size="14" fill="#9a2036" text-anchor="middle">3 In the aligner</text>
+<g data-s="" style="--s:4">
+<rect x="372" y="56" width="140" height="52" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="442" y="87" text-anchor="middle">Aligner</text>
+</g>
+<g data-s="" style="--s:4">
+<text x="442" y="136" font-size="14" fill="#5c5856" text-anchor="middle">F-16</text>
+</g>
+<g data-s="" style="--s:5">
+<path d="M516 82H536" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f3-arrow)"/>
+</g>
+<text x="610" y="40" font-size="14" fill="#9a2036" text-anchor="middle">4 In the LLM context</text>
+<g data-s="" style="--s:6">
+<rect x="540" y="56" width="140" height="52" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="610" y="87" text-anchor="middle">Downstream LLM</text>
+</g>
+<g data-s="" style="--s:6">
+<text x="610" y="136" font-size="14" fill="#5c5856" text-anchor="middle">VideoChat3</text>
+</g>
+</g>
+</svg>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 3.</b> Where motion enters a vision pipeline, at four insertion points. Time can enter before tokenization, inside the vision tower, in the aligner, or in the context of the downstream language model.</figcaption></figure>
+<ul><li><strong>Level 1. Codec Signals &amp; Pre-Attention Saliency (OneVision, EMA, CoPE-VideoLM).</strong> Time enters before tokenization. Macroblock motion vectors and discrete cosine transform residuals prune static background tokens, routing computation strictly to dynamic regions.</li><li><strong>Level 2. Vision Tower Internal Spatiotemporal Attention (Qwen3-VL, VideoChat3, MoonViT-3D).</strong> Time is integrated directly inside the sensory backbone via joint space-time self-attention and 3D Rotary Position Embeddings (3D-RoPE).</li><li><strong>Level 3. Aligner-Stage Aggregation (F-16).</strong> Frames are processed through a frozen 2D image encoder, and temporal dynamics are merged post-hoc in a lightweight projection bridge. While computationally cheap, it acts as an informational bottleneck.</li><li><strong>Level 4. Downstream LLM Context Concatenation.</strong> Frames are independently tokenized and prepended directly to the context window of a downstream causal LLM. Effective for high-level conversational question answering, but too computationally heavy and high-latency for real-time robotic control loops.</li></ul>
+<h2 id="physics">3. Physics-Based Reasoning and Intuitive Mechanics</h2>
+<p class="lead">A world model builds internal intuition for predicting environmental invariants under the flow of time.</p>
+<p>An embodied world model captures mechanical primitives that are able to simulate and reason in physics. This describes the field of intuitive mechanics, with primitives built off classical physical mechanics. A valid world model must enforce four foundational physical primitives.</p>
+<ol><li><strong>Object Permanence and Spatiotemporal Continuity.</strong> When an object moves behind an opaque barrier, its physical identity and trajectory must be maintained in the latent space. The model must not hallucinate the object’s destruction upon occlusion, nor treat its reappearance as the spontaneous generation of new mass. Benchmarks such as Physion and IntPhys provide quantitative measures of whether models preserve object trajectories through occlusions using violation-of-expectation protocols.</li><li><strong>Gravitational Support and Equilibrium.</strong> The model must anticipate gravitational acceleration and recognize when an object lacks a stable supporting surface. Inside the model, an unsupported object must register as a non-equilibrium state that transitions downward until stable contact boundaries are established.</li><li><strong>Collision Boundaries and Non-Penetration Constraints.</strong> Physical solids cannot occupy the same spatial coordinates. A world model must predict a structural stop, rebound, or deformation when two volumes intersect. Causal diagnostic benchmarks like CLEVRER track whether models understand multi-body collision dynamics and counterfactual interventions ("What would happen if the blue sphere were removed?").</li><li><strong>Inertial Momentum and Frictional Dissipation.</strong> Moving masses resist changes in velocity unless opposing forces are applied. The model must track velocity vectors across successive frames and simulate deceleration gradients caused by surface friction or fluid resistance.</li></ol>
+<figure id="figure-4" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Object permanence, gravity, collision boundaries, and inertia with friction." xmlns="http://www.w3.org/2000/svg" width="720" height="376" viewBox="0 0 720 376">
+<title>Four mechanical primitives of intuitive physics</title>
+<desc>Four panels. Object permanence: a ball keeps moving behind a wall. Gravity: a block hanging over a table edge falls. Collision: a ball hits a wall and bounces back. Inertia and friction: a rolling ball slows down.</desc>
+<defs><marker id="f4-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f4-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<rect width="720" height="376" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
+<rect x="24" y="20" width="328" height="160" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="40" y="52" font-size="18" font-weight="bold">1  Object permanence</text>
+<circle class="p-ball" cx="72" cy="112" r="12" fill="#9a2036"/>
+<path d="M172 76H196V136H172Z" fill="#ebe7e5" stroke="#8a8481" stroke-width="1.25"/>
+<path d="M90 112H260" fill="none" stroke="#9a2036" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#f4-arrow-red)"/>
+<circle cx="280" cy="112" r="12" fill="#ffffff" stroke="#9a2036" stroke-width="1.5"/>
+<text x="40" y="164" font-size="14" fill="#5c5856">The ball still exists behind the wall</text>
+<rect x="368" y="20" width="328" height="160" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="384" y="52" font-size="18" font-weight="bold">2  Gravity</text>
+<path d="M408 124H544V136H408Z" fill="#ebe7e5" stroke="#8a8481" stroke-width="1.25"/>
+<path class="g-block" d="M516 84H572V124H516Z" fill="#f3dedc" stroke="#9a2036" stroke-width="1.25"/>
+<path d="M596 84V132" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f4-arrow-red)"/>
+<text x="384" y="164" font-size="14" fill="#5c5856">A block without support must fall</text>
+<rect x="24" y="196" width="328" height="160" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="40" y="228" font-size="18" font-weight="bold">3  Collision</text>
+<path d="M228 248H244V312H228Z" fill="#ebe7e5" stroke="#8a8481" stroke-width="1.25"/>
+<circle class="c-ball" cx="210" cy="280" r="14" fill="#9a2036"/>
+<path d="M80 268H188" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
+<path d="M188 298H96" fill="none" stroke="#9a2036" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#f4-arrow-red)"/>
+<text x="40" y="340" font-size="14" fill="#5c5856">Solids stop or bounce and never pass through</text>
+<rect x="368" y="196" width="328" height="160" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="384" y="228" font-size="18" font-weight="bold">4  Inertia and friction</text>
+<path d="M392 304H672V312H392Z" fill="#ebe7e5" stroke="#8a8481" stroke-width="1.25"/>
+<circle cx="416" cy="290" r="12" fill="#ffffff" stroke="#8a8481" stroke-width="1.5"/>
+<path d="M408 260H472" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
+<circle cx="520" cy="290" r="12" fill="#ffffff" stroke="#8a8481" stroke-width="1.5"/>
+<path d="M512 260H552" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
+<circle class="i-ball" cx="624" cy="290" r="12" fill="#9a2036" stroke="#9a2036" stroke-width="1.5"/>
+<path d="M616 260H636" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
+<text x="384" y="340" font-size="14" fill="#5c5856">Friction slows a moving ball over time</text>
+</g>
+</svg>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 4.</b> The four mechanical primitives of intuitive physics. Object permanence, gravity, collision boundaries, and inertia with friction.</figcaption></figure>
+<h3 id="hallucination-vs-verification">Generative Hallucination vs. Latent Physical Verification</h3>
+<p>Generative video models driven by pixel diffusion or autoregressive synthesis frequently violate physical laws because their loss functions are designed to reward visual plausibility rather than physical consistency. In longer rollouts, generative models often cause objects to morph, dissolve, teleport, or phase through solid barriers under occlusion.</p>
+<p>Non-generative world models like JEPA prevent physical anomalies by enforcing state transitions in continuous representation space. Because the latent space encodes spatial geometry and structural affordances, physical constraints can be physically verified.</p>
+<p>A dramatic empirical demonstration appears in V-JEPA 2-AC. When experimenting in robotic manipulation with Franka Emika Panda arms, V-JEPA 2-AC evaluates a simulated grasp action. The latent predictor correctly projects that an object will translate across the tabletop if the gripper fingers are closed, but will remain static if the fingers are open. Contact dynamics, friction, and object constancy emerge naturally from the geometry of the learned latent manifold without task-specific engineering.</p>
+<h2 id="energy-based">4. Energy-Based Transformers and Non-Generative Optimization</h2>
+<p>How does an agent identify the sequence of actions that achieves an envisioned goal inside a world model without trial-and-error execution? The answer lies in unifying Joint-Embedding Predictive Architectures with Energy-Based Models (EBMs).</p>
+<p>Energy-Based Models represent a powerful alternative to probability densities over high-dimensional input observations. Rather than estimating normalized probabilities, an energy-based world model defines an energy function <span class="m">E(x,a,y)</span> that measures the scalar compatibility between an observed context <span class="m">x</span>, a candidate action <span class="m">a</span>, and an outcome <span class="m">y</span>, and it is never negative.</p>
+<div class="eq" data-tex="E(x, a, y) \geq 0">E(x, a, y) \geq 0</div>
+<p>Low energy values correspond to physically plausible transitions that obey environmental mechanics; high energy values designate physically impossible or violating transitions.</p>
+<h3 id="latent-goal-planning">Mathematical Formulation of Latent Goal Planning</h3>
+<p>In the context of visual trajectory planning, let <span class="m">z_k = f(x_k)</span> represent the current latent visual state extracted by a frozen encoder, let <span class="m">s_k</span> represent the agent's internal proprioceptive state, and let <span class="m">z_g = f(x_g)</span> denote a target visual goal state. An action-conditioned predictor network <span class="m">P_\phi</span> forecasts the future latent state resulting from a sequence of candidate actions <span class="m">\hat{a}_{1:T}</span>.</p>
+<div class="eq" data-tex="\hat{z}_{k+T} = P_\phi(z_k, s_k, \hat{a}_{1:T})">\hat{z}_{k+T} = P_\phi(z_k, s_k, \hat{a}_{1:T})</div>
+<p>The energy of the hypothetical action sequence is defined as the latent displacement between the predicted state and the target goal.</p>
+<div class="eq" data-tex="E(\hat{a}_{1:T}; z_k, s_k, z_g) = \|P_\phi(z_k, s_k, \hat{a}_{1:T}) - z_g\|_1">E(\hat{a}_{1:T}; z_k, s_k, z_g) = \|P_\phi(z_k, s_k, \hat{a}_{1:T}) - z_g\|_1</div>
+<p>The optimal sequence of motor commands <span class="m">\hat{a}^{\star}_{1:T}</span> is identified by solving an energy minimization problem.</p>
+<div class="eq" data-tex="\hat{a}^{\star}_{1:T} = \arg\min_{\hat{a}_{1:T}} E(\hat{a}_{1:T}; z_k, s_k, z_g)">\hat{a}^{\star}_{1:T} = \arg\min_{\hat{a}_{1:T}} E(\hat{a}_{1:T}; z_k, s_k, z_g)</div>
+<figure id="figure-5" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Sample action sequences, roll them out through the predictor, score their energy against the goal, then refit the sampling distribution to the elite candidates." xmlns="http://www.w3.org/2000/svg" width="720" height="172" viewBox="0 0 720 172">
+<title>The cross-entropy method in latent space</title>
+<desc>A four-step loop. Sample action sequences, roll them out with the predictor, score each by energy against the goal, then keep the best ones and refit the sampling distribution. The loop repeats until the distribution narrows.</desc>
+<defs><marker id="f5-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f5-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<rect width="720" height="172" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
+<circle r="6" fill="#9a2036" opacity="0"><animateMotion id="cem-token" path="M106 56H610V124H106V56" dur="3.2s" begin="indefinite" repeatCount="3"/><set attributeName="opacity" to="1" begin="cem-token.begin" end="cem-token.end"/></circle>
+<g data-s="" style="--s:0">
+<rect x="36" y="24" width="140" height="64" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="106" y="51" text-anchor="middle">1 Sample N</text>
+<text x="106" y="71" text-anchor="middle">action sequences</text>
+</g>
+<g data-s="" style="--s:1">
+<path d="M180 56H200" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
+</g>
+<g data-s="" style="--s:2">
+<rect x="204" y="24" width="140" height="64" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="274" y="51" text-anchor="middle">2 Roll out with</text>
+<text x="274" y="71" text-anchor="middle">predictor P</text>
+</g>
+<g data-s="" style="--s:3">
+<path d="M348 56H368" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
+</g>
+<g data-s="" style="--s:4">
+<rect x="372" y="24" width="140" height="64" rx="4" fill="#f3dedc" stroke="#9a2036" stroke-width="1.25"/>
+<text x="442" y="51" text-anchor="middle">3 Score energy</text>
+<text x="442" y="71" text-anchor="middle">against goal z_g</text>
+</g>
+<g data-s="" style="--s:5">
+<path d="M516 56H536" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
+</g>
+<g data-s="" style="--s:6">
+<rect x="540" y="24" width="140" height="64" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="610" y="51" text-anchor="middle">4 Keep elites,</text>
+<text x="610" y="71" text-anchor="middle">refit Gaussian</text>
+</g>
+<g data-s="" style="--s:7">
+<path d="M612 92V124H108V96" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f5-arrow-red)"/>
+</g>
+<g data-s="" style="--s:8">
+<text x="360" y="152" font-size="14" fill="#5c5856" text-anchor="middle">Repeat until the distribution narrows, then act</text>
+</g>
+</g>
+</svg>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 5.</b> The cross-entropy method on a latent energy landscape. Sample action sequences, roll them out through the predictor, score their energy against the goal, then refit the sampling distribution to the elite candidates.</figcaption></figure>
+<h3 id="cem">The Cross-Entropy Method (CEM) Optimization Loop</h3>
+<p>Because the latent space discards high-frequency pixel noise, the resulting energy landscape <span class="m">E(\hat{a})</span> is smooth, locally convex, and free from the chaotic local minima that plague raw pixel space.</p>
+<p>This smoothness enables derivative-free trajectory optimizers, most notably the Cross-Entropy Method (CEM).</p>
+<ol><li><strong>Sampling.</strong> Sample a population of <span class="m">N</span> candidate action sequences from a Gaussian belief distribution <span class="m">\mathcal{N}(\mu^{(i)}, \Sigma^{(i)})</span>.</li><li><strong>Rollout.</strong> Pass all candidate sequences through the lightweight predictor network <span class="m">P_\phi</span> in parallel to forecast future latent states.</li><li><strong>Scoring.</strong> Evaluate the scalar energy of each rollout against the target goal vector <span class="m">z_g</span>.</li><li><strong>Refinement.</strong> Select the top elite candidates (e.g., top 10%) and refit the mean <span class="m">\mu^{(i+1)}</span> and covariance <span class="m">\Sigma^{(i+1)}</span>.</li></ol>
+<p>Within 5 to 10 iterations, the distribution collapses tightly around the optimal control trajectory that minimizes distance to the goal state <span class="m">z_g</span>. In V-JEPA 2-AC, this entire optimization loop executes in under 16 seconds on a single GPU (evaluating 800 candidates), enabling real-time closed-loop control.</p>
+<h3 id="ebt">Energy-Based Transformers (EBT) as Deliberate Reasoning Systems</h3>
+<p>Recent advancements in Energy-Based Transformers (EBT) generalize this formulation from external planning heads into foundational sequence architectures.</p>
+<p>An EBT evaluates the global joint energy of a complete sequence rather than generating tokens sequentially via left-to-right autoregression. Predictions are refined iteratively at test time through gradient descent on the energy surface. This architectural shift enables the model to allocate dynamic compute budgets to complex physical scenarios, spending additional optimization steps resolving ambiguous collisions, mirroring deliberate System 2 human cognition.</p>
+<h2 id="omni-vs-latent">5. The Frontier of Multimodal Video, Omni Models vs. Latent Simulators</h2>
+<p>Video processing currently takes two major approaches, Omni-modal Vision-Language Models (such as Nemotron-Omni, LLaVA-Video, and Qwen2.5-VL) and Non-Generative Latent World Models (such as V-JEPA 2-AC and DreamerV3).</p>
+<p>Omni models and world models are complementary for an agent. An omni-modal language model excels at high-level semantic reasoning and symbolic communication. Yet, it possesses no native machinery for computing physical velocities, resolving collision boundaries, or calculating low-level motor torques.</p>
+<figure id="figure-6" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="An omni-modal vision-language model plans in semantic terms and hands visual sub-goals to a latent world model, which plans motor commands with the cross-entropy method." xmlns="http://www.w3.org/2000/svg" width="720" height="324" viewBox="0 0 720 324">
+<title>A hierarchical dual-system agent</title>
+<desc>Top tier, an omni-modal vision-language model turns a language instruction into a visual sub-goal. Bottom tier, a latent world model plans with the cross-entropy method from the current visual and robot state and outputs 7-DoF motor commands.</desc>
+<defs><marker id="f6-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f6-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<rect width="720" height="324" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
+<rect x="24" y="20" width="672" height="120" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
+<text x="40" y="48" font-size="18" font-weight="bold">Omni-modal VLM</text>
+<text x="196" y="48" font-size="14" fill="#5c5856">Semantic planner</text>
+<g data-s="" style="--s:0">
+<rect x="40" y="64" width="192" height="52" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="136" y="95" text-anchor="middle">Language instruction</text>
+</g>
+<g data-s="" style="--s:1">
+<path d="M236 90H260" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
+</g>
+<g data-s="" style="--s:2">
+<rect x="264" y="64" width="192" height="52" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="360" y="95" text-anchor="middle">Reason about the scene</text>
+</g>
+<g data-s="" style="--s:3">
+<path d="M460 90H484" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
+</g>
+<g data-s="" style="--s:4">
+<rect x="488" y="64" width="192" height="52" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="584" y="95" text-anchor="middle">Visual sub-goal</text>
+</g>
+<rect x="24" y="164" width="672" height="140" rx="8" fill="#faf0ef" stroke="#9a2036" stroke-width="1.25"/>
+<text x="40" y="192" font-size="18" fill="#9a2036" font-weight="bold">Latent world model</text>
+<text x="224" y="192" font-size="14" fill="#5c5856">Physics simulator</text>
+<g data-s="" style="--s:6">
+<rect x="40" y="208" width="192" height="56" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="136" y="231" text-anchor="middle">Current visual and</text>
+<text x="136" y="251" text-anchor="middle">robot state</text>
+</g>
+<g data-s="" style="--s:7">
+<path d="M236 236H260" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f6-arrow-red)"/>
+</g>
+<g data-s="" style="--s:8">
+<rect x="264" y="208" width="192" height="56" rx="4" fill="#9a2036"/>
+<text x="360" y="241" text-anchor="middle" fill="#ffffff">CEM planning</text>
+</g>
+<g data-s="" style="--s:9">
+<path d="M460 236H484" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f6-arrow-red)"/>
+</g>
+<g data-s="" style="--s:10">
+<rect x="488" y="208" width="192" height="56" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
+<text x="584" y="241" text-anchor="middle">7-DoF motor commands</text>
+</g>
+<g data-s="" style="--s:5">
+<path d="M584 120V148H360V204" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
+</g>
+</g>
+</svg>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 6.</b> The hierarchical dual-system agent. An omni-modal vision-language model plans in semantic terms and hands visual sub-goals to a latent world model, which plans motor commands with the cross-entropy method.</figcaption></figure>
+<h3 id="what-counts">Where Do You Draw the Line on What Counts as a "World Model"?</h3>
+<p>To qualify as a genuine world model, an architecture must satisfy three foundational criteria.</p>
+<ol><li><strong>Counterfactual Action Conditioning.</strong> The model must accept an external action intervention and project the resulting environmental transition. A system that passively forecasts video without accommodating agent intervention functions as an observational video predictor, not an active world model.</li><li><strong>Compact Invariant State Representations.</strong> The model must maintain an internal state space that isolates predictable physical invariants (mass, continuity, spatial geometry) from high-frequency perceptual noise.</li><li><strong>Affordance for Lookahead Trajectory Search.</strong> The internal state space must be computationally efficient and mathematically structured to support search and optimization algorithms (MPC, CEM) within practical control loops.</li></ol>
+<h3 id="dual-system">The Hierarchical Dual-System Architecture</h3>
+<p>The emergent paradigm for autonomous robotics is the synthesis of both approaches into a hierarchical dual-system architecture.</p>
+<ul><li><strong>Top Level (Omni-Modal Foundation Planner).</strong> Receives high-level human linguistic instructions (\"Pick up the red mug and place it on the top shelf\"), reasons about environmental semantics, and decomposes goals into a sequence of intermediate visual sub-goals (<span class="m">z_{goal}</span>).</li><li><strong>Bottom Level (Latent World Model Simulator).</strong> Receives the current visual state <span class="m">z_t</span>, robot proprioceptive state <span class="m">s_t</span>, and candidate sub-goal <span class="m">z_{goal}</span>. It executes rapid latent energy minimization via Cross-Entropy Method planning, generating fine-grained 7-DoF motor control commands that enforce physical non-penetration and contact constraints.</li></ul>
+<p>In this structure, the Omni-LLM functions as the semantic planner, while the latent world model serves as the continuous physics simulator executing real-time control.</p>
+<h2 id="applications">6. Real-World Applications Across Science and Industry</h2>
+<p>World models are rapidly transitioning from theoretical conceptualizations into the core operational architecture for complex autonomous systems.</p>
+<h3 id="robotics">Embodied Robotics and Zero-Shot Manipulation</h3>
+<p>Traditional reinforcement learning in robotics suffers from acute sample inefficiency. Training a policy to manipulate a single object typically requires hundreds of hours of teleoperated human demonstrations.</p>
+<p>A world model decouples representation learning from motor execution. In V-JEPA 2-AC, the base visual encoder is pretrained entirely on uncurated internet video without human action labels, and the dynamics predictor is grounded using less than 62 hours of diverse robotic interaction data from the DROID dataset. When deployed on physical Franka Emika Panda arms across unseen research facilities, the model achieves zero-shot goal-directed manipulation (grasping novel tools and clearing cluttered obstacles), relying exclusively on latent trajectory planning without task-specific reward engineering.</p>
+<h3 id="driving">Autonomous Driving and Digital World Simulation</h3>
+<p>Autonomous vehicles navigate an open-world environment characterized by rare, safety-critical long-tail edge cases (pedestrian near-misses, sudden vehicle cut-ins, construction debris).</p>
+<p>Generative world models (such as Wayve GAIA-1 and GAIA-2, alongside NVIDIA Cosmos) simulate high-resolution multi-camera driving environments conditioned on steering, braking, and throttle inputs. By acting as high-fidelity neural simulators, these models enable autonomous driving stacks to rehearse thousands of counterfactual collision-avoidance maneuvers entirely in simulation before deploying code to physical vehicles.</p>
+<h3 id="gaming">Gaming and Interactive Neural Simulation Engines</h3>
+<p>World models represent the technological foundation for fully neural, interactive simulation engines that eliminate traditional game engines and physics hand-coding.</p>
+<ul><li><strong>Google DeepMind's Genie.</strong> An 11-billion-parameter foundation model trained unsupervised on 200,000+ hours of unlabeled 2D platformer gameplay. Genie learns an unsupervised latent action space without action labels, enabling users to play generated worlds frame-by-frame via keyboard controls.</li><li><strong>Decart &amp; Etched's Oasis.</strong> A real-time, playable open-world model running at 20 frames per second on custom hardware, simulating Minecraft-like gameplay, block modifications, and player mechanics directly within transformer weights.</li><li><strong>DIAMOND.</strong> Demonstrates that diffusion models trained in latent state space provide exceptionally stable physics simulations for reinforcement learning agents in Atari and continuous control tasks.</li></ul>
+<h3 id="biochemistry">Biochemistry and Molecular Mechanics</h3>
+<p>Beyond macroscopic mechanics, world models hold immense potential in biochemistry and molecular simulation. Modeling the continuous folding pathways of macromolecules and the spatiotemporal binding dynamics of chemical compounds shares mathematical foundations with visual trajectory tracking. Simulating molecular physics in latent representation spaces unlocks scalable scientific discovery without the intractable compute cost of traditional quantum mechanical simulations.</p>
+<p>Two recent papers show what this looks like in practice. At the molecular scale, <strong>MDGen</strong> (Jing et al., NeurIPS 2024) learns to generate molecular dynamics trajectories directly. By conditioning on chosen frames, one model handles forward simulation, transition path sampling between two known states, and upsampling of coarse trajectories, and it produces reasonable ensembles for protein monomers. At the scale of whole cells, <strong>Chreode</strong> (Qiu et al., 2026) treats a genetic perturbation as an action and predicts the next cell state, the same structure as an action-conditioned world model. Pretrained on a 2.4M-cell mouse embryonic atlas, it cuts prediction error on the Norman Perturb-seq benchmark by 12.4% when used inside the GEARS model, which suggests that dynamics learned from development carry over to CRISPR perturbations.</p>
+<h2 id="interpretability">7. Interpretability and World Models Are Two Sides of the Same Coin</h2>
+<p>In contemporary mechanistic interpretability research, a compelling thesis has recently emerged, that interpretability and world models are two sides of the same coin. Sonia Joseph, cofounder and CEO of World Mechanics, champions this view, and her team lays out the research program in <a href="https://worldmechanics.ai/blog/physical-intelligence-through-interpretability/" target="_blank" rel="noopener">Building physical intelligence through interpretability</a>.</p>
+<p>A world model is defined by its capacity to internalize an accurate, causal simulation of physical reality. Mechanistic interpretability is the study of discovering and understanding the internal circuits and representational geometry of a model.</p>
+<p>When an artificial neural network successfully masters physical reasoning (such as tracking an occluded object or calculating gravitational toppling), it must form an internal linear or low-dimensional manifold corresponding to true spatial coordinates <span class="m">(x,y,z)</span>, velocities, and object permanence. Probing the latent representations of a world model provides direct proof that the network has internalized physical invariants rather than surface-level memorization. Conversely, mechanistic interpretability techniques supply the mathematical tools needed to verify that a world model's internal geometry is physically aligned, stable, and safe for autonomous deployment.</p>
+      </article>
+      <div class="toc"><nav aria-label="Contents"><ul class="ticks" id="ticks"></ul></nav></div>
+    </main>
+  </div>
+
+  <aside class="rail" aria-label="Timeline">
+    <h2>Timeline</h2>
+    <div class="seg" role="group" aria-label="Filter"><button data-f="all" aria-pressed="true">All</button><button data-f="issues" aria-pressed="false">Issues</button><button data-f="papers" aria-pressed="false">Papers</button></div>
+    <ul class="tl" id="tl"></ul>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+const TL = [{"k": "2026-10-09", "d": "Oct 9, 2026", "t": "Building physical intelligence through interpretability", "w": "World Mechanics (blog)", "u": "https://worldmechanics.ai/blog/physical-intelligence-through-interpretability/", "issue": false}, {"k": "2026-07-16", "d": "Jul 16, 2026", "t": "VideoChat3: Fully Open Video MLLM for Efficient and Generalist Video Understanding", "w": "Xinhao Li et al.", "u": "https://arxiv.org/abs/2607.14935", "issue": false}, {"k": "2026-05-27", "d": "May 27, 2026", "t": "Chreode: A Cell World Model for One-Step Temporal Dynamics and Perturbation Prediction", "w": "Mufan Qiu et al.", "u": "https://arxiv.org/abs/2605.28111", "issue": false}, {"k": "2026-04-27", "d": "Apr 27, 2026", "t": "Nemotron 3 Nano Omni: Efficient and Open Multimodal Intelligence", "w": "NVIDIA", "u": "https://arxiv.org/abs/2604.24954", "issue": false}, {"k": "2026-03-28", "d": "Mar 28, 2026", "t": "TrackMAE: Video Representation Learning via Track Mask and Predict", "w": "Renaud Vandeghen et al.", "u": "https://arxiv.org/abs/2603.27268", "issue": false}, {"k": "2026-03-15", "d": "Mar 15, 2026", "t": "V-JEPA 2.1: Unlocking Dense Features in Video Self-Supervised Learning", "w": "Lorenzo Mur-Labadia et al.", "u": "https://arxiv.org/abs/2603.14482", "issue": false}, {"k": "2026-02-13", "d": "Feb 13, 2026", "t": "CoPE-VideoLM: Leveraging Codec Primitives For Efficient Video Language Modeling", "w": "Sayan Deb Sarkar et al.", "u": "https://arxiv.org/abs/2602.13191", "issue": false}, {"k": "2026-02-09", "d": "Feb 9, 2026", "t": "OneVision-Encoder: Codec-Aligned Sparsity as a Foundational Principle for Multimodal Intelligence", "w": "Feilong Tang et al.", "u": "https://arxiv.org/abs/2602.08683", "issue": false}, {"k": "2026-02-04", "d": "Feb 4, 2026", "t": "Interpreting Physics in Video World Models", "w": "Sonia Joseph et al.", "u": "https://arxiv.org/abs/2602.07050", "issue": false}, {"k": "2025-11-26", "d": "Nov 26, 2025", "t": "Qwen3-VL Technical Report", "w": "Shuai Bai et al.", "u": "https://arxiv.org/abs/2511.21631", "issue": false}, {"k": "2025-07-02", "d": "Jul 2, 2025", "t": "Energy-Based Transformers are Scalable Learners and Thinkers", "w": "Alexi Gladstone et al.", "u": "https://arxiv.org/abs/2507.02092", "issue": false}, {"k": "2025-06-11b", "d": "Jun 11, 2025", "t": "V-JEPA 2: Self-Supervised Video Models Enable Understanding, Prediction and Planning", "w": "Mido Assran et al.", "u": "https://arxiv.org/abs/2506.09985", "issue": false}, {"k": "2025-06-11a", "d": "Jun 11, 2025", "t": "IntPhys 2: Benchmarking Intuitive Physics Understanding In Complex Synthetic Environments", "w": "Florian Bordes et al.", "u": "https://arxiv.org/abs/2506.09849", "issue": true}, {"k": "2025-03-26", "d": "Mar 26, 2025", "t": "GAIA-2: A Controllable Multi-View Generative World Model for Autonomous Driving", "w": "Lloyd Russell et al.", "u": "https://arxiv.org/abs/2503.20523", "issue": false}, {"k": "2025-03-18", "d": "Mar 18, 2025", "t": "Improving LLM Video Understanding with 16 Frames Per Second", "w": "Yixuan Li et al.", "u": "https://arxiv.org/abs/2503.13956", "issue": false}, {"k": "2025-03-17", "d": "Mar 17, 2025", "t": "Efficient Motion-Aware Video MLLM", "w": "Zijia Zhao et al.", "u": "https://arxiv.org/abs/2503.13016", "issue": false}, {"k": "2025-02-19", "d": "Feb 19, 2025", "t": "Qwen2.5-VL Technical Report", "w": "Shuai Bai et al.", "u": "https://arxiv.org/abs/2502.13923", "issue": false}, {"k": "2025-01-07", "d": "Jan 7, 2025", "t": "Cosmos World Foundation Model Platform for Physical AI", "w": "NVIDIA", "u": "https://arxiv.org/abs/2501.03575", "issue": false}, {"k": "2024-10-03", "d": "Oct 3, 2024", "t": "LLaVA-Video: Video Instruction Tuning With Synthetic Data", "w": "Yuanhan Zhang et al.", "u": "https://arxiv.org/abs/2410.02713", "issue": false}, {"k": "2024-09-26", "d": "Sep 26, 2024", "t": "Generative Modeling of Molecular Dynamics Trajectories", "w": "Bowen Jing et al.", "u": "https://arxiv.org/abs/2409.17808", "issue": false}, {"k": "2024-05-20", "d": "May 20, 2024", "t": "Diffusion for World Modeling: Visual Details Matter in Atari", "w": "Eloi Alonso et al.", "u": "https://arxiv.org/abs/2405.12399", "issue": false}, {"k": "2024-02-23", "d": "Feb 23, 2024", "t": "Genie: Generative Interactive Environments", "w": "Jake Bruce et al.", "u": "https://arxiv.org/abs/2402.15391", "issue": false}, {"k": "2024-02-15", "d": "Feb 15, 2024", "t": "Revisiting Feature Prediction for Learning Visual Representations from Video", "w": "Adrien Bardes et al.", "u": "https://arxiv.org/abs/2404.08471", "issue": false}, {"k": "2023-09-29", "d": "Sep 29, 2023", "t": "GAIA-1: A Generative World Model for Autonomous Driving", "w": "Anthony Hu et al.", "u": "https://arxiv.org/abs/2309.17080", "issue": false}, {"k": "2023-03-29", "d": "Mar 29, 2023", "t": "VideoMAE V2: Scaling Video Masked Autoencoders with Dual Masking", "w": "Limin Wang et al.", "u": "https://arxiv.org/abs/2303.16727", "issue": false}, {"k": "2023-01-10", "d": "Jan 10, 2023", "t": "Mastering Diverse Domains through World Models", "w": "Danijar Hafner et al.", "u": "https://arxiv.org/abs/2301.04104", "issue": false}, {"k": "2022-03-23", "d": "Mar 23, 2022", "t": "VideoMAE: Masked Autoencoders are Data-Efficient Learners for Self-Supervised Video Pre-Training", "w": "Zhan Tong et al.", "u": "https://arxiv.org/abs/2203.12602", "issue": false}, {"k": "2021-06-15", "d": "Jun 15, 2021", "t": "Physion: Evaluating Physical Prediction from Vision in Humans and Machines", "w": "Daniel Bear et al.", "u": "https://arxiv.org/abs/2106.08261", "issue": true}, {"k": "2019-10-03", "d": "Oct 3, 2019", "t": "CLEVRER: CoLlision Events for Video REpresentation and Reasoning", "w": "Kexin Yi et al.", "u": "https://arxiv.org/abs/1910.01442", "issue": false}, {"k": "2018-03-27", "d": "Mar 27, 2018", "t": "World Models", "w": "David Ha, J\u00fcrgen Schmidhuber", "u": "https://arxiv.org/abs/1803.10122", "issue": false}, {"k": "2018-03-20", "d": "Mar 20, 2018", "t": "IntPhys: A Framework and Benchmark for Visual Intuitive Physics Reasoning", "w": "Ronan Riochet et al.", "u": "https://arxiv.org/abs/1803.07616", "issue": true}];
+if (window.katex) {
+  document.querySelectorAll('.m').forEach(e => katex.render(e.textContent, e, { throwOnError: false }));
+  document.querySelectorAll('.eq').forEach(e => katex.render(e.dataset.tex, e, { displayMode: true, throwOnError: false }));
+}
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+
+const heads = [...document.querySelectorAll('article h2[id], article h3[id]')];
+const ticks = document.getElementById('ticks');
+const links = heads.map(h => { const li = el('li', h.tagName === 'H3' ? 'sub' : ''), a = el('a'); a.href = '#' + h.id; a.append(el('span', null, h.textContent)); li.append(a); ticks.append(li); return a; });
+const spy = () => { let c = 0; heads.forEach((h, i) => { if (h.getBoundingClientRect().top < 140) c = i; }); links.forEach((a, i) => a.classList.toggle('on', i === c)); };
+addEventListener('scroll', spy, { passive: true }); spy();
+
+const tl = document.getElementById('tl');
+function draw(f) {
+  tl.textContent = '';
+  let yr = null;
+  if (f !== 'papers') {
+    tl.append(el('li', 'yr', '2026')); yr = '2026';
+    const li = el('li', 'it cur'), a = el('a'); a.href = '#introduction';
+    a.append(el('span', 'd', 'Guide'), el('span', 't', 'The Full Guide to World Models')); li.append(a); tl.append(li);
+  }
+  TL.filter(r => f === 'all' || (f === 'issues' ? r.issue : !r.issue)).forEach(r => {
+    const y = r.k.slice(0, 4);
+    if (y !== yr) { tl.append(el('li', 'yr', y)); yr = y; }
+    const li = el('li', 'it' + (r.issue ? ' issue' : '')), a = el('a');
+    a.href = r.u; a.target = '_blank'; a.rel = 'noopener';
+    a.append(el('span', 'd', r.d), el('span', 't', r.t), el('span', 'w', r.w)); li.append(a); tl.append(li);
+  });
+}
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b)); draw(b.dataset.f);
+}));
+draw('all');
+
+const tg = document.getElementById('tab-g'), tt = document.getElementById('tab-t');
+const tab = s => { document.body.classList.toggle('show-tl', s); tg.setAttribute('aria-selected', !s); tt.setAttribute('aria-selected', s); };
+tg.onclick = () => tab(false); tt.onclick = () => tab(true);
+
+const th = document.getElementById('theme');
+th.onclick = () => {
+  const dark = document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.dataset.theme = dark ? 'light' : 'dark';
+  th.querySelector('.lbl').textContent = dark ? 'Dark theme' : 'Light theme';
+};
+const fol = document.getElementById('follow');
+if (fol) fol.onclick = () => { fol.textContent = fol.textContent.includes('+') ? 'Following' : '+ Follow'; };
+const like = document.getElementById('like');
+if (like) like.onclick = () => like.setAttribute('aria-pressed', like.getAttribute('aria-pressed') !== 'true');
+
+(() => {
+  const figs = [...document.querySelectorAll('figure.fig-anim')];
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const play = (f) => {
+    f.classList.add('reset'); f.classList.remove('play'); void f.offsetWidth; f.classList.remove('reset');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      f.classList.add('play');
+      const m = f.querySelector('animateMotion');
+      if (m) setTimeout(() => { try { m.endElement(); m.beginElement(); } catch (e) {} }, 1300);
+    }));
+  };
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (e.isIntersecting) { play(e.target); io.unobserve(e.target); }
+  }), { threshold: 0.35 });
+  figs.forEach((f) => {
+    f.classList.add('anim'); io.observe(f);
+    const b = f.querySelector('.replay'); b.hidden = false; b.addEventListener('click', () => play(f));
+  });
+})();
+
+</script>
+</body>
+</html>
