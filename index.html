@@ -157,6 +157,10 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 @keyframes wm-hit { 0% { transform: translateX(-110px); animation-timing-function: ease-in; }
   40% { transform: translateX(0); animation-timing-function: ease-out; } 78% { transform: translateX(-80px); opacity: 1; }
   86% { transform: translateX(-80px); opacity: 0; } 87% { transform: translateX(0); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+figure.anim .scan { opacity: 0; }
+figure.anim.play .scan { animation: wm-scan 3.2s steps(4, jump-none) 1s forwards; }
+figure.anim.play .scan2 { animation-delay: 4.6s; }
+@keyframes wm-scan { from { opacity: 1; transform: translateX(0); } to { opacity: 1; transform: translateX(372px); } }
 @keyframes wm-roll { from { transform: translateX(-208px); } to { transform: translateX(0); } }
 
 </style>
@@ -271,11 +275,87 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <h3 id="appearance-vs-motion">The Appearance vs. Motion Dichotomy</h3>
 <p>In video representation learning, a widespread failure mode arises from evaluating models on appearance-dominated benchmarks such as Kinetics-400 (K400). On Kinetics-400, models frequently achieve state-of-the-art action classification scores by identifying static contextual cues alone; recognizing a tennis court, a swimming pool, or a kitchen counter enables a network to guess the action label from a single frozen frame without computing any temporal velocity.</p>
 <p>The true diagnostic test of an encoder's physical understanding lies in motion-sensitive, temporally asymmetric benchmarks such as Something-Something v2 (SSv2) and Diving-48. On Something-Something v2, reversing the temporal sequence of frames fundamentally alters the semantic label, so "pushing an object from left to right" becomes "pushing an object from right to left," and "dropping a ball into a cup" becomes "retrieving a ball from a cup."</p>
+<figure id="figure-2" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Something-Something v2 labels depend on the order of frames. Played forward, these four frames show an object pushed from left to right. Reversed, the same frames show it pushed from right to left, so a model that ignores frame order cannot tell the two clips apart." xmlns="http://www.w3.org/2000/svg" width="720" height="372" viewBox="0 0 720 372">
+<title>The same frames in two orders</title>
+<desc>Top row, four frames played forward show a red block moving from left to right, labeled pushing something from left to right. Bottom row, the same four frames in reverse order show it moving right to left, labeled pushing something from right to left.</desc>
+<defs><marker id="f2-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f2-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<rect width="720" height="372" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
+<text x="24" y="38" font-size="16" fill="#1d1b1a" font-weight="bold">Clip played forward</text>
+<g data-s="" style="--s:1">
+<rect x="24" y="52" width="112" height="96" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="32" y="72" font-size="14" fill="#5c5856">frame 1</text>
+<path d="M32 128H128" fill="none" stroke="#8a8481" stroke-width="1.5"/>
+<rect x="34" y="106" width="22" height="22" rx="4" fill="#9a2036"/>
+</g>
+<g data-s="" style="--s:2">
+<rect x="148" y="52" width="112" height="96" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="156" y="72" font-size="14" fill="#5c5856">frame 2</text>
+<path d="M156 128H252" fill="none" stroke="#8a8481" stroke-width="1.5"/>
+<rect x="182" y="106" width="22" height="22" rx="4" fill="#9a2036"/>
+</g>
+<g data-s="" style="--s:3">
+<rect x="272" y="52" width="112" height="96" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="280" y="72" font-size="14" fill="#5c5856">frame 3</text>
+<path d="M280 128H376" fill="none" stroke="#8a8481" stroke-width="1.5"/>
+<rect x="330" y="106" width="22" height="22" rx="4" fill="#9a2036"/>
+</g>
+<g data-s="" style="--s:4">
+<rect x="396" y="52" width="112" height="96" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="404" y="72" font-size="14" fill="#5c5856">frame 4</text>
+<path d="M404 128H500" fill="none" stroke="#8a8481" stroke-width="1.5"/>
+<rect x="478" y="106" width="22" height="22" rx="4" fill="#9a2036"/>
+</g>
+<rect class="scan scan1" x="21" y="49" width="118" height="102" rx="6" fill="none" stroke="#9a2036" stroke-width="2.5"/>
+<g data-s="" style="--s:5">
+<path d="M516 100H544" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f2-arrow-red)"/>
+<rect x="548" y="72" width="156" height="56" rx="4" fill="#f3dedc" stroke="#9a2036" stroke-width="1.25"/>
+<text x="626" y="95" text-anchor="middle">Pushing something</text>
+<text x="626" y="115" text-anchor="middle">from left to right</text>
+</g>
+<text x="24" y="198" font-size="16" fill="#1d1b1a" font-weight="bold">Same frames, reversed</text>
+<g data-s="" style="--s:1">
+<rect x="24" y="212" width="112" height="96" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="32" y="232" font-size="14" fill="#5c5856">frame 4</text>
+<path d="M32 288H128" fill="none" stroke="#8a8481" stroke-width="1.5"/>
+<rect x="106" y="266" width="22" height="22" rx="4" fill="#9a2036"/>
+</g>
+<g data-s="" style="--s:2">
+<rect x="148" y="212" width="112" height="96" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="156" y="232" font-size="14" fill="#5c5856">frame 3</text>
+<path d="M156 288H252" fill="none" stroke="#8a8481" stroke-width="1.5"/>
+<rect x="206" y="266" width="22" height="22" rx="4" fill="#9a2036"/>
+</g>
+<g data-s="" style="--s:3">
+<rect x="272" y="212" width="112" height="96" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="280" y="232" font-size="14" fill="#5c5856">frame 2</text>
+<path d="M280 288H376" fill="none" stroke="#8a8481" stroke-width="1.5"/>
+<rect x="306" y="266" width="22" height="22" rx="4" fill="#9a2036"/>
+</g>
+<g data-s="" style="--s:4">
+<rect x="396" y="212" width="112" height="96" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
+<text x="404" y="232" font-size="14" fill="#5c5856">frame 1</text>
+<path d="M404 288H500" fill="none" stroke="#8a8481" stroke-width="1.5"/>
+<rect x="406" y="266" width="22" height="22" rx="4" fill="#9a2036"/>
+</g>
+<rect class="scan scan2" x="21" y="209" width="118" height="102" rx="6" fill="none" stroke="#9a2036" stroke-width="2.5"/>
+<g data-s="" style="--s:5">
+<path d="M516 260H544" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f2-arrow-red)"/>
+<rect x="548" y="232" width="156" height="56" rx="4" fill="#f3dedc" stroke="#9a2036" stroke-width="1.25"/>
+<text x="626" y="255" text-anchor="middle">Pushing something</text>
+<text x="626" y="275" text-anchor="middle">from right to left</text>
+</g>
+<g data-s="" style="--s:6">
+<text x="360" y="352" font-size="14" fill="#5c5856" text-anchor="middle">Every frame appears in both clips. Only the order separates the two labels.</text>
+</g>
+</g>
+</svg>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 2.</b> The same frames in two orders. Something-Something v2 labels depend on the order of frames. Played forward, these four frames show an object pushed from left to right. Reversed, the same frames show it pushed from right to left, so a model that ignores frame order cannot tell the two clips apart.</figcaption></figure>
 <p>Frame-by-frame 2D vision models (including contrastive models like SigLIP 2 and self-supervised architectures like DINOv2) achieve high accuracy on Kinetics-400 (83% to 87%) yet experience catastrophic collapse on Something-Something v2, falling to approximately 50%. Because these models encode frames independently and aggregate features post-hoc via temporal pooling or shallow heads, their internal latent representations remain blind to acceleration, directionality, and momentum.</p>
-<figure id="figure-2" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Frozen-backbone accuracy with an attentive probe, as reported in the V-JEPA 2 paper. Image encoders score well on Kinetics-400 and near 50% on Something-Something v2." xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360">
+<figure id="figure-3" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Frozen-backbone accuracy with an attentive probe, as reported in the V-JEPA 2 paper. Image encoders score well on Kinetics-400 and near 50% on Something-Something v2." xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360">
 <title>Appearance and motion accuracy by model family</title>
 <desc>Frozen-backbone accuracy from the V-JEPA 2 paper. Image encoders DINOv2 and SigLIP 2 score 83.6 and 87.3 percent on Kinetics-400 but about 50 percent on Something-Something v2. InternVideo2 scores 69.7 and V-JEPA 2 scores 77.3 percent on Something-Something v2.</desc>
-<defs><marker id="f2-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f2-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<defs><marker id="f3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f3-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
 <rect width="720" height="360" fill="#ffffff"/>
 <g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
 <rect x="80" y="20" width="14" height="14" fill="#8a8481"/>
@@ -318,7 +398,7 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="619" y="340" font-size="14" fill="#5c5856" text-anchor="middle">1B video</text>
 </g>
 </svg>
-<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 2.</b> The appearance and motion performance gap across model families. Frozen-backbone accuracy with an attentive probe, as reported in the V-JEPA 2 paper. Image encoders score well on Kinetics-400 and near 50% on Something-Something v2.</figcaption></figure>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 3.</b> The appearance and motion performance gap across model families. Frozen-backbone accuracy with an attentive probe, as reported in the V-JEPA 2 paper. Image encoders score well on Kinetics-400 and near 50% on Something-Something v2.</figcaption></figure>
 <h3 id="four-paradigms">The Four Architectural Paradigms of Visual Representation</h3>
 <p>Modern spatiotemporal encoder architectures fall into four primary learning paradigms.</p>
 <p><strong>1. Pixel-Level Masked Video Modeling (VideoMAE, VideoMAE V2).</strong> VideoMAE rebuilds hidden space-time cubes of pixels with an asymmetric encoder and decoder. Video makes masked autoencoding easy to cheat because a hidden patch often appears in a neighboring frame, allowing the model to simply copy unmasked content across time. Tube masking blocks that shortcut by hiding the exact same spatial position across every frame in the clip.</p>
@@ -330,11 +410,11 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <p><strong>4. Codec-Guided Predictive Compression (OneVision-Encoder).</strong> Framing visual understanding as an information-theoretic compression problem, OneVision-Encoder departs from uniform frame processing by directly reading native motion vectors and prediction residuals from compressed H.265/HEVC video streams. It retains complete spatial context on I-frames while extracting only the top 3.1% to 25% most dynamic patches from P-frames.</p>
 <p>Coupled with 3D-RoPE, it processes dense 64-frame video clips without token explosion, maintaining fine-grained temporal tracking at a fraction of the compute cost of uniform frame sampling.</p>
 <h3 id="where-to-add-time">Where Should a Vision-Language Model Add Time?</h3>
-<p>A vision-language model (VLM) sends video through a vision tower, which turns frames into visual features, and then through an aligner, a small projection layer that translates those features into tokens the LLM can read. Each of those stages can handle motion. Modern architectures bring in time at one of four points along this pipeline, numbered in Figure 3 from earliest to latest.</p>
-<figure id="figure-3" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Time can enter before tokenization, inside the vision tower, in the aligner, or in the context of the downstream language model." xmlns="http://www.w3.org/2000/svg" width="720" height="196" viewBox="0 0 720 196">
+<p>A vision-language model (VLM) sends video through a vision tower, which turns frames into visual features, and then through an aligner, a small projection layer that translates those features into tokens the LLM can read. Each of those stages can handle motion. Modern architectures bring in time at one of four points along this pipeline, numbered in Figure 4 from earliest to latest.</p>
+<figure id="figure-4" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Time can enter before tokenization, inside the vision tower, in the aligner, or in the context of the downstream language model." xmlns="http://www.w3.org/2000/svg" width="720" height="196" viewBox="0 0 720 196">
 <title>Where motion enters a vision pipeline</title>
 <desc>A video model pipeline runs from codec signals to the vision tower, the aligner and a downstream language model. Time can enter at each of these four points. Example models are listed under each stage.</desc>
-<defs><marker id="f3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f3-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<defs><marker id="f4-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f4-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
 <rect width="720" height="196" fill="#ffffff"/>
 <g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
 <text x="106" y="40" font-size="14" fill="#9a2036" text-anchor="middle">1 Before tokens</text>
@@ -347,7 +427,7 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="106" y="156" font-size="14" fill="#5c5856" text-anchor="middle">CoPE-VideoLM</text>
 </g>
 <g data-s="" style="--s:1">
-<path d="M180 82H200" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f3-arrow)"/>
+<path d="M180 82H200" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
 </g>
 <text x="274" y="40" font-size="14" fill="#9a2036" text-anchor="middle">2 Inside the tower</text>
 <g data-s="" style="--s:2">
@@ -359,7 +439,7 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="274" y="156" font-size="14" fill="#5c5856" text-anchor="middle">VideoChat3, MoonViT-3D</text>
 </g>
 <g data-s="" style="--s:3">
-<path d="M348 82H368" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f3-arrow)"/>
+<path d="M348 82H368" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
 </g>
 <text x="442" y="40" font-size="14" fill="#9a2036" text-anchor="middle">3 In the aligner</text>
 <g data-s="" style="--s:4">
@@ -370,7 +450,7 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="442" y="136" font-size="14" fill="#5c5856" text-anchor="middle">F-16</text>
 </g>
 <g data-s="" style="--s:5">
-<path d="M516 82H536" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f3-arrow)"/>
+<path d="M516 82H536" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
 </g>
 <text x="610" y="40" font-size="14" fill="#9a2036" text-anchor="middle">4 In the LLM context</text>
 <g data-s="" style="--s:6">
@@ -382,51 +462,51 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 </g>
 </g>
 </svg>
-<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 3.</b> Where motion enters a vision pipeline, at four insertion points. Time can enter before tokenization, inside the vision tower, in the aligner, or in the context of the downstream language model.</figcaption></figure>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 4.</b> Where motion enters a vision pipeline, at four insertion points. Time can enter before tokenization, inside the vision tower, in the aligner, or in the context of the downstream language model.</figcaption></figure>
 <ol><li><strong>Before tokenization, from codec signals</strong> (OneVision, EMA, CoPE-VideoLM). Time enters before the video is turned into tokens. Macroblock motion vectors and discrete cosine transform residuals prune static background tokens, so computation flows only to the dynamic regions of the frame.</li><li><strong>Inside the vision tower</strong> (Qwen3-VL, VideoChat3, MoonViT-3D). Time is integrated directly into the sensory backbone through joint space-time self-attention and 3D Rotary Position Embeddings (3D-RoPE).</li><li><strong>In the aligner</strong> (F-16). Frames pass through a frozen 2D image encoder and temporal dynamics are merged post-hoc in a lightweight projection bridge. This keeps compute cheap, but the bridge becomes an informational bottleneck.</li><li><strong>In the LLM context.</strong> Frames are tokenized independently and prepended to the context window of a downstream causal LLM. This works well for high-level conversational question answering, but it is too computationally heavy and slow for real-time robotic control loops.</li></ol>
 <h2 id="physics">3. Physics-Based Reasoning and Intuitive Mechanics</h2>
 <p class="lead">A world model builds internal intuition for predicting environmental invariants under the flow of time.</p>
 <p>An embodied world model, meaning one that drives an agent acting in the physical world such as a robot, captures mechanical primitives that let it simulate and reason about physics. This describes the field of intuitive mechanics, with primitives built off classical physical mechanics. There is no formal consensus on the exact list, but most intuitive physics benchmarks test the same four primitives, and we argue that a useful world model should respect them.</p>
 <ol><li><strong>Object Permanence and Spatiotemporal Continuity.</strong> When an object moves behind an opaque barrier, its physical identity and trajectory must be maintained in the latent space. The model must not hallucinate the object’s destruction upon occlusion, nor treat its reappearance as the spontaneous generation of new mass. Benchmarks such as Physion and IntPhys provide quantitative measures of whether models preserve object trajectories through occlusions using violation-of-expectation protocols.</li><li><strong>Gravitational Support and Equilibrium.</strong> The model must anticipate gravitational acceleration and recognize when an object lacks a stable supporting surface. Inside the model, an unsupported object must register as a non-equilibrium state that transitions downward until stable contact boundaries are established.</li><li><strong>Collision Boundaries and Non-Penetration Constraints.</strong> Physical solids cannot occupy the same spatial coordinates. A world model must predict a structural stop, rebound, or deformation when two volumes intersect. Causal diagnostic benchmarks like CLEVRER track whether models understand multi-body collision dynamics and counterfactual interventions ("What would happen if the blue sphere were removed?").</li><li><strong>Inertial Momentum and Frictional Dissipation.</strong> Moving masses resist changes in velocity unless opposing forces are applied. The model must track velocity vectors across successive frames and simulate deceleration gradients caused by surface friction or fluid resistance.</li></ol>
-<figure id="figure-4" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Object permanence, gravity, collision boundaries, and inertia with friction." xmlns="http://www.w3.org/2000/svg" width="720" height="376" viewBox="0 0 720 376">
+<figure id="figure-5" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Object permanence, gravity, collision boundaries, and inertia with friction." xmlns="http://www.w3.org/2000/svg" width="720" height="376" viewBox="0 0 720 376">
 <title>Four mechanical primitives of intuitive physics</title>
 <desc>Four panels. Object permanence: a ball keeps moving behind a wall. Gravity: a block hanging over a table edge falls. Collision: a ball hits a wall and bounces back. Inertia and friction: a rolling ball slows down.</desc>
-<defs><marker id="f4-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f4-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<defs><marker id="f5-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f5-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
 <rect width="720" height="376" fill="#ffffff"/>
 <g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
 <rect x="24" y="20" width="328" height="160" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
 <text x="40" y="52" font-size="18" font-weight="bold">1  Object permanence</text>
 <circle class="p-ball" cx="72" cy="112" r="12" fill="#9a2036"/>
 <path d="M172 76H196V136H172Z" fill="#ebe7e5" stroke="#8a8481" stroke-width="1.25"/>
-<path d="M90 112H260" fill="none" stroke="#9a2036" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#f4-arrow-red)"/>
+<path d="M90 112H260" fill="none" stroke="#9a2036" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#f5-arrow-red)"/>
 <circle cx="280" cy="112" r="12" fill="#ffffff" stroke="#9a2036" stroke-width="1.5"/>
 <text x="40" y="164" font-size="14" fill="#5c5856">The ball still exists behind the wall</text>
 <rect x="368" y="20" width="328" height="160" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
 <text x="384" y="52" font-size="18" font-weight="bold">2  Gravity</text>
 <path d="M408 124H544V136H408Z" fill="#ebe7e5" stroke="#8a8481" stroke-width="1.25"/>
 <path class="g-block" d="M516 84H572V124H516Z" fill="#f3dedc" stroke="#9a2036" stroke-width="1.25"/>
-<path d="M596 84V132" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f4-arrow-red)"/>
+<path d="M596 84V132" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f5-arrow-red)"/>
 <text x="384" y="164" font-size="14" fill="#5c5856">A block without support must fall</text>
 <rect x="24" y="196" width="328" height="160" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
 <text x="40" y="228" font-size="18" font-weight="bold">3  Collision</text>
 <path d="M228 248H244V312H228Z" fill="#ebe7e5" stroke="#8a8481" stroke-width="1.25"/>
 <circle class="c-ball" cx="210" cy="280" r="14" fill="#9a2036"/>
-<path d="M80 268H188" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
-<path d="M188 298H96" fill="none" stroke="#9a2036" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#f4-arrow-red)"/>
+<path d="M80 268H188" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
+<path d="M188 298H96" fill="none" stroke="#9a2036" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#f5-arrow-red)"/>
 <text x="40" y="340" font-size="14" fill="#5c5856">Solids stop or bounce and never pass through</text>
 <rect x="368" y="196" width="328" height="160" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
 <text x="384" y="228" font-size="18" font-weight="bold">4  Inertia and friction</text>
 <path d="M392 304H672V312H392Z" fill="#ebe7e5" stroke="#8a8481" stroke-width="1.25"/>
 <circle cx="416" cy="290" r="12" fill="#ffffff" stroke="#8a8481" stroke-width="1.5"/>
-<path d="M408 260H472" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
+<path d="M408 260H472" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
 <circle cx="520" cy="290" r="12" fill="#ffffff" stroke="#8a8481" stroke-width="1.5"/>
-<path d="M512 260H552" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
+<path d="M512 260H552" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
 <circle class="i-ball" cx="624" cy="290" r="12" fill="#9a2036" stroke="#9a2036" stroke-width="1.5"/>
-<path d="M616 260H636" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f4-arrow)"/>
+<path d="M616 260H636" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
 <text x="384" y="340" font-size="14" fill="#5c5856">Friction slows a moving ball over time</text>
 </g>
 </svg>
-<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 4.</b> The four mechanical primitives of intuitive physics. Object permanence, gravity, collision boundaries, and inertia with friction.</figcaption></figure>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 5.</b> The four mechanical primitives of intuitive physics. Object permanence, gravity, collision boundaries, and inertia with friction.</figcaption></figure>
 <h3 id="hallucination-vs-verification">Why Video Models Break the Laws of Physics</h3>
 <p>Generative video models driven by pixel diffusion or autoregressive synthesis frequently violate physical laws because their loss functions are designed to reward visual plausibility rather than physical consistency. In longer rollouts, generative models often cause objects to morph, dissolve, teleport, or phase through solid barriers under occlusion.</p>
 <p>Non-generative world models like JEPA prevent physical anomalies by enforcing state transitions in continuous representation space. Because the latent space encodes spatial geometry and structural affordances, physical constraints can be physically verified.</p>
@@ -444,10 +524,10 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <div class="eq" data-tex="E(\hat{a}_{1:T}; z_k, s_k, z_g) = \|P_\phi(z_k, s_k, \hat{a}_{1:T}) - z_g\|_1">E(\hat{a}_{1:T}; z_k, s_k, z_g) = \|P_\phi(z_k, s_k, \hat{a}_{1:T}) - z_g\|_1</div>
 <p>The optimal sequence of motor commands <span class="m">\hat{a}^{\star}_{1:T}</span> is identified by solving an energy minimization problem.</p>
 <div class="eq" data-tex="\hat{a}^{\star}_{1:T} = \arg\min_{\hat{a}_{1:T}} E(\hat{a}_{1:T}; z_k, s_k, z_g)">\hat{a}^{\star}_{1:T} = \arg\min_{\hat{a}_{1:T}} E(\hat{a}_{1:T}; z_k, s_k, z_g)</div>
-<figure id="figure-5" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Sample action sequences, roll them out through the predictor, score their energy against the goal, then refit the sampling distribution to the elite candidates." xmlns="http://www.w3.org/2000/svg" width="720" height="172" viewBox="0 0 720 172">
+<figure id="figure-6" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="Sample action sequences, roll them out through the predictor, score their energy against the goal, then refit the sampling distribution to the elite candidates." xmlns="http://www.w3.org/2000/svg" width="720" height="172" viewBox="0 0 720 172">
 <title>The cross-entropy method in latent space</title>
 <desc>A four-step loop. Sample action sequences, roll them out with the predictor, score each by energy against the goal, then keep the best ones and refit the sampling distribution. The loop repeats until the distribution narrows.</desc>
-<defs><marker id="f5-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f5-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<defs><marker id="f6-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f6-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
 <rect width="720" height="172" fill="#ffffff"/>
 <g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
 <circle r="6" fill="#9a2036" opacity="0"><animateMotion id="cem-token" path="M106 56H610V124H106V56" dur="3.2s" begin="indefinite" repeatCount="3"/><set attributeName="opacity" to="1" begin="cem-token.begin" end="cem-token.end"/></circle>
@@ -457,7 +537,7 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="106" y="71" text-anchor="middle">action sequences</text>
 </g>
 <g data-s="" style="--s:1">
-<path d="M180 56H200" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
+<path d="M180 56H200" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
 </g>
 <g data-s="" style="--s:2">
 <rect x="204" y="24" width="140" height="64" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
@@ -465,7 +545,7 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="274" y="71" text-anchor="middle">predictor P</text>
 </g>
 <g data-s="" style="--s:3">
-<path d="M348 56H368" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
+<path d="M348 56H368" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
 </g>
 <g data-s="" style="--s:4">
 <rect x="372" y="24" width="140" height="64" rx="4" fill="#f3dedc" stroke="#9a2036" stroke-width="1.25"/>
@@ -473,7 +553,7 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="442" y="71" text-anchor="middle">against goal z_g</text>
 </g>
 <g data-s="" style="--s:5">
-<path d="M516 56H536" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f5-arrow)"/>
+<path d="M516 56H536" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
 </g>
 <g data-s="" style="--s:6">
 <rect x="540" y="24" width="140" height="64" rx="4" fill="#f6f4f3" stroke="#8a8481" stroke-width="1.25"/>
@@ -481,14 +561,14 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="610" y="71" text-anchor="middle">refit Gaussian</text>
 </g>
 <g data-s="" style="--s:7">
-<path d="M612 92V124H108V96" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f5-arrow-red)"/>
+<path d="M612 92V124H108V96" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f6-arrow-red)"/>
 </g>
 <g data-s="" style="--s:8">
 <text x="360" y="152" font-size="14" fill="#5c5856" text-anchor="middle">Repeat until the distribution narrows, then act</text>
 </g>
 </g>
 </svg>
-<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 5.</b> The cross-entropy method on a latent energy landscape. Sample action sequences, roll them out through the predictor, score their energy against the goal, then refit the sampling distribution to the elite candidates.</figcaption></figure>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 6.</b> The cross-entropy method on a latent energy landscape. Sample action sequences, roll them out through the predictor, score their energy against the goal, then refit the sampling distribution to the elite candidates.</figcaption></figure>
 <h3 id="cem">The Cross-Entropy Method (CEM) Optimization Loop</h3>
 <p>Because the latent space discards high-frequency pixel noise, the resulting energy landscape <span class="m">E(\hat{a})</span> is smooth, locally convex, and free from the chaotic local minima that plague raw pixel space.</p>
 <p>This smoothness enables derivative-free trajectory optimizers, most notably the Cross-Entropy Method (CEM).</p>
@@ -500,10 +580,10 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <h2 id="omni-vs-latent">5. The Frontier of Multimodal Video, Omni Models vs. Latent Simulators</h2>
 <p>Video processing currently takes two major approaches, Omni-modal Vision-Language Models (such as Nemotron-Omni, LLaVA-Video, and Qwen2.5-VL) and Non-Generative Latent World Models (such as V-JEPA 2-AC and DreamerV3).</p>
 <p>Omni models and world models are complementary for an agent. An omni-modal language model excels at high-level semantic reasoning and symbolic communication. Yet, it possesses no native machinery for computing physical velocities, resolving collision boundaries, or calculating low-level motor torques.</p>
-<figure id="figure-6" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="An omni-modal vision-language model plans in semantic terms and hands visual sub-goals to a latent world model, which plans motor commands with the cross-entropy method." xmlns="http://www.w3.org/2000/svg" width="720" height="324" viewBox="0 0 720 324">
+<figure id="figure-7" class="fig-anim"><div class="fig-frame"><svg role="img" aria-label="An omni-modal vision-language model plans in semantic terms and hands visual sub-goals to a latent world model, which plans motor commands with the cross-entropy method." xmlns="http://www.w3.org/2000/svg" width="720" height="324" viewBox="0 0 720 324">
 <title>A hierarchical dual-system agent</title>
 <desc>Top tier, an omni-modal vision-language model turns a language instruction into a visual sub-goal. Bottom tier, a latent world model plans with the cross-entropy method from the current visual and robot state and outputs 7-DoF motor commands.</desc>
-<defs><marker id="f6-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f6-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
+<defs><marker id="f7-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#1d1b1a"/></marker><marker id="f7-arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9a2036"/></marker></defs>
 <rect width="720" height="324" fill="#ffffff"/>
 <g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#1d1b1a">
 <rect x="24" y="20" width="672" height="120" rx="8" fill="#ffffff" stroke="#d9d4d1" stroke-width="1.25"/>
@@ -514,14 +594,14 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="136" y="95" text-anchor="middle">Language instruction</text>
 </g>
 <g data-s="" style="--s:1">
-<path d="M236 90H260" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
+<path d="M236 90H260" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f7-arrow)"/>
 </g>
 <g data-s="" style="--s:2">
 <rect x="264" y="64" width="192" height="52" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
 <text x="360" y="95" text-anchor="middle">Reason about the scene</text>
 </g>
 <g data-s="" style="--s:3">
-<path d="M460 90H484" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
+<path d="M460 90H484" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f7-arrow)"/>
 </g>
 <g data-s="" style="--s:4">
 <rect x="488" y="64" width="192" height="52" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
@@ -536,25 +616,25 @@ figure.anim.play .i-ball { animation: wm-roll 2.4s cubic-bezier(.15,.75,.3,1) .3
 <text x="136" y="251" text-anchor="middle">robot state</text>
 </g>
 <g data-s="" style="--s:7">
-<path d="M236 236H260" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f6-arrow-red)"/>
+<path d="M236 236H260" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f7-arrow-red)"/>
 </g>
 <g data-s="" style="--s:8">
 <rect x="264" y="208" width="192" height="56" rx="4" fill="#9a2036"/>
 <text x="360" y="241" text-anchor="middle" fill="#ffffff">CEM planning</text>
 </g>
 <g data-s="" style="--s:9">
-<path d="M460 236H484" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f6-arrow-red)"/>
+<path d="M460 236H484" fill="none" stroke="#9a2036" stroke-width="2.5" marker-end="url(#f7-arrow-red)"/>
 </g>
 <g data-s="" style="--s:10">
 <rect x="488" y="208" width="192" height="56" rx="4" fill="#ffffff" stroke="#8a8481" stroke-width="1.25"/>
 <text x="584" y="241" text-anchor="middle">7-DoF motor commands</text>
 </g>
 <g data-s="" style="--s:5">
-<path d="M584 120V148H360V204" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f6-arrow)"/>
+<path d="M584 120V148H360V204" fill="none" stroke="#1d1b1a" stroke-width="1.5" marker-end="url(#f7-arrow)"/>
 </g>
 </g>
 </svg>
-<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 6.</b> The hierarchical dual-system agent. An omni-modal vision-language model plans in semantic terms and hands visual sub-goals to a latent world model, which plans motor commands with the cross-entropy method.</figcaption></figure>
+<button class="replay" type="button" hidden>Replay</button></div><figcaption><b>Figure 7.</b> The hierarchical dual-system agent. An omni-modal vision-language model plans in semantic terms and hands visual sub-goals to a latent world model, which plans motor commands with the cross-entropy method.</figcaption></figure>
 <h3 id="dual-system">The Hierarchical Dual-System Architecture</h3>
 <p>The emergent paradigm for autonomous robotics is the synthesis of both approaches into a hierarchical dual-system architecture.</p>
 <ul><li><strong>The planner, which understands the instruction.</strong> An omni-modal model receives a human instruction (\"Pick up the red mug and place it on the top shelf\"), reasons about environmental semantics, and decomposes goals into a sequence of intermediate visual sub-goals (<span class="m">z_{goal}</span>).</li><li><strong>The simulator, which handles the physics.</strong> A latent world model receives the current visual state <span class="m">z_t</span>, robot proprioceptive state <span class="m">s_t</span>, and candidate sub-goal <span class="m">z_{goal}</span>. It executes rapid latent energy minimization via Cross-Entropy Method planning, generating fine-grained 7-DoF motor control commands that enforce physical non-penetration and contact constraints.</li></ul>
